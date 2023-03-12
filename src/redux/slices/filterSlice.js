@@ -18,6 +18,9 @@ const initialState = {
   activeCatId: 0,
 
   searchValue: '',
+
+  pagesTotal: 1,
+  pageCurrent: 1,
 };
 
 export const filterSlice = createSlice({
@@ -44,9 +47,24 @@ export const filterSlice = createSlice({
     setSearchValue: (state, action) => {
       state.searchValue = action.payload;
     },
+
+    setPagesTotal: (state, action) => {
+      state.pagesTotal = action.payload;
+    },
+
+    setPageCurrent: (state, action) => {
+      state.pageCurrent = action.payload;
+    },
   },
 });
 
-export const { sort, setSortCategory, setActiveCatId, setPizzaStorage, setSearchValue } =
-  filterSlice.actions;
+export const {
+  sort,
+  setSortCategory,
+  setActiveCatId,
+  setPizzaStorage,
+  setSearchValue,
+  setPagesTotal,
+  setPageCurrent,
+} = filterSlice.actions;
 export default filterSlice.reducer;

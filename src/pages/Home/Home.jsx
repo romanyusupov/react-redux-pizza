@@ -7,7 +7,7 @@ import Sort from '../../components/Sort/Sort';
 import PizzaBlock from '../../components/PizzaBlock/PizzaBlock';
 import Paginations from '../../components/Paginations/Paginations';
 
-import { setPizzaStorage } from '../../redux/slices/filterSlice';
+import { setPizzaStorage, setPagesTotal } from '../../redux/slices/filterSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Home = () => {
@@ -17,10 +17,9 @@ const Home = () => {
   const sortDirection = useSelector((store) => store.filter.sortDirection);
   const activeCatId = useSelector((store) => store.filter.activeCatId);
   const searchValue = useSelector((store) => store.filter.searchValue);
+  const pageCurrent = useSelector(store => store.filter.pageCurrent);
 
   const [isContentLoaded, setIsContentLoaded] = React.useState(false);
-  const [pagesTotal, setPagesTotal] = React.useState(1);
-  const [pageCurrent, setPageCurrent] = React.useState(1);
 
   function roundUp(num, precision) {
     precision = Math.pow(10, precision);
@@ -29,7 +28,7 @@ const Home = () => {
 
   React.useEffect(() => {
     axios.get(`https://63a5914c318b23efa79755f9.mockapi.io/pizza`).then((resp) => {
-      setPagesTotal(roundUp(resp.data.length / 4, 0));
+      dispatch(setPagesTotal(roundUp(resp.data.length / 4, 0)));
     });
   }, []);
 
@@ -79,10 +78,6 @@ const Home = () => {
               )}
           </div>
           <Paginations
-            pageCurrent={pageCurrent}
-            setPageCurrent={setPageCurrent}
-            pagesTotal={pagesTotal}
-            setPagesTotal={setPagesTotal}
           />
         </div>
       </div>

@@ -1,8 +1,14 @@
 import React from 'react';
 import styles from './paginaions.module.scss';
 import cx from 'classnames';
+import { setPageCurrent } from '../../redux/slices/filterSlice';
 
-const Paginations = ({ pagesTotal, pageCurrent, setPageCurrent }) => {
+import { useSelector, useDispatch } from 'react-redux';
+
+const Paginations = () => {
+  const pagesTotal = useSelector(store => store.filter.pagesTotal);
+  const pageCurrent = useSelector(store => store.filter.pageCurrent);
+  const dispatch = useDispatch();
 
   const pagesArr = [];
   for (let i = 0; i < pagesTotal; i++) {
@@ -32,7 +38,10 @@ const Paginations = ({ pagesTotal, pageCurrent, setPageCurrent }) => {
         </li>
 
         {pagesArr.map((pageNmb) => (
-          <li className={ cx (styles.numberRound, (pageCurrent === pageNmb ? styles.active : ''))} onClick={() => setPageCurrent(pageNmb)} key={pageNmb} >
+          <li
+            className={cx(styles.numberRound, pageCurrent === pageNmb ? styles.active : '')}
+            onClick={() => dispatch(setPageCurrent(pageNmb))}
+            key={pageNmb}>
             <span className={styles.pageNumber}>{pageNmb}</span>
           </li>
         ))}
