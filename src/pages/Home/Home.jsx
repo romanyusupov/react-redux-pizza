@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import qs from 'qs';
+import { useNavigate } from 'react-router-dom';
 
 import Skeleton from '../../components/PizzaBlock/Skeleton';
 import Categories from '../../components/Categories/Categories';
@@ -7,19 +9,36 @@ import Sort from '../../components/Sort/Sort';
 import PizzaBlock from '../../components/PizzaBlock/PizzaBlock';
 import Paginations from '../../components/Paginations/Paginations';
 
-import { setPizzaStorage, setPagesTotal } from '../../redux/slices/filterSlice';
+import { setPizzaStorage, setPagesTotal, setParamsFromUrl } from '../../redux/slices/filterSlice';
 import { useSelector, useDispatch } from 'react-redux';
+
+import useIsFirstRender from './isFirstRender';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isSearch = React.useRef(false);
+
   const pizzaStorage = useSelector((store) => store.filter.pizzaStorage);
   const nameSortCategory = useSelector((store) => store.filter.nameSortCategory);
   const sortDirection = useSelector((store) => store.filter.sortDirection);
   const activeCatId = useSelector((store) => store.filter.activeCatId);
   const searchValue = useSelector((store) => store.filter.searchValue);
-  const pageCurrent = useSelector(store => store.filter.pageCurrent);
+  const pageCurrent = useSelector((store) => store.filter.pageCurrent);
+  //const userQueryStr = useSelector((store) => store.filter.userQueryStr);
 
   const [isContentLoaded, setIsContentLoaded] = React.useState(false);
+
+  const isFirst = useIsFirstRender();
+
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substr(1));
+     // console.log(params);
+      dispatch(setParamsFromUrl(params));
+      isSearch.current = true;
+    }
+  }, []);
 
   function roundUp(num, precision) {
     precision = Math.pow(10, precision);
@@ -33,6 +52,20 @@ const Home = () => {
   }, []);
 
   React.useEffect(() => {
+
+    if (!isFirst) {
+      const queryString = qs.stringify({
+        nameSortCategory,
+        activeCatId,
+        searchValue,
+        pageCurrent,
+      });
+      //console.log(queryString);
+      navigate(`?${queryString}`);
+    } 
+  }, [nameSortCategory, activeCatId, searchValue, pageCurrent]);
+
+  const fetchPizzas = () => {
     //const search = searchValue ? `&search=${searchValue}` : '';
     setIsContentLoaded(false);
     axios
@@ -50,6 +83,13 @@ const Home = () => {
         setIsContentLoaded(true);
       });
     //window.scrollTo(0, 0);
+  };
+
+  React.useEffect(() => {
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
+    isSearch.current = false;
   }, [nameSortCategory, activeCatId, searchValue, pageCurrent]);
 
   return (
@@ -77,8 +117,7 @@ const Home = () => {
                 ),
               )}
           </div>
-          <Paginations
-          />
+          <Paginations />
         </div>
       </div>
     </>

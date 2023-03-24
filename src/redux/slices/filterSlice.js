@@ -21,6 +21,7 @@ const initialState = {
 
   pagesTotal: 1,
   pageCurrent: 1,
+
 };
 
 export const filterSlice = createSlice({
@@ -55,6 +56,16 @@ export const filterSlice = createSlice({
     setPageCurrent: (state, action) => {
       state.pageCurrent = action.payload;
     },
+
+    setParamsFromUrl: (state, action) => {
+      console.log(action.payload);
+      state.nameSortCategory = action.payload.nameSortCategory;
+      state.activeCatId =  Number(action.payload.activeCatId);
+      state.searchValue = action.payload.searchValue;
+      state.pageCurrent = Number(action.payload.pageCurrent);
+    },
+
+
   },
 });
 
@@ -66,5 +77,6 @@ export const {
   setSearchValue,
   setPagesTotal,
   setPageCurrent,
+  setParamsFromUrl,
 } = filterSlice.actions;
 export default filterSlice.reducer;
