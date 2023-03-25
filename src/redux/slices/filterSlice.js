@@ -6,10 +6,10 @@ const initialState = {
   catArr: ['Все', 'Гриль', 'Острые', 'Морские', 'Закрытые', 'Экадашные'],
 
   sortArr: [
-    { sortCategory: 'По популярности', nameSortCategory: 'rating' },
-    { sortCategory: 'Сначала недорогие', nameSortCategory: '-price' },
-    { sortCategory: 'Сначала подороже', nameSortCategory: 'price' },
-    { sortCategory: 'По алфавиту', nameSortCategory: '-title' },
+    { sortCategory: 'По популярности', nameSortCategory: 'rating', id: 0 },
+    { sortCategory: 'Сначала недорогие', nameSortCategory: '-price', id: 1 },
+    { sortCategory: 'Сначала подороже', nameSortCategory: 'price', id: 2 },
+    { sortCategory: 'По алфавиту', nameSortCategory: '-title', id: 3 },
   ],
   sortCategory: 0,
   nameSortCategory: 'rating',
@@ -58,14 +58,15 @@ export const filterSlice = createSlice({
     },
 
     setParamsFromUrl: (state, action) => {
-      console.log(action.payload);
+      if (action.payload.nameSortCategory.includes('-')) {
+        state.sortDirection = 'asc';
+      } else state.sortDirection = 'desc';
+      state.sortCategory = Number(action.payload.sortCategory);
       state.nameSortCategory = action.payload.nameSortCategory;
       state.activeCatId =  Number(action.payload.activeCatId);
       state.searchValue = action.payload.searchValue;
       state.pageCurrent = Number(action.payload.pageCurrent);
     },
-
-
   },
 });
 

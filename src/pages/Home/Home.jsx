@@ -25,20 +25,12 @@ const Home = () => {
   const activeCatId = useSelector((store) => store.filter.activeCatId);
   const searchValue = useSelector((store) => store.filter.searchValue);
   const pageCurrent = useSelector((store) => store.filter.pageCurrent);
+  const sortArr = useSelector((store) => store.filter.sortArr);
   //const userQueryStr = useSelector((store) => store.filter.userQueryStr);
 
   const [isContentLoaded, setIsContentLoaded] = React.useState(false);
 
   const isFirst = useIsFirstRender();
-
-  React.useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.substr(1));
-     // console.log(params);
-      dispatch(setParamsFromUrl(params));
-      isSearch.current = true;
-    }
-  }, []);
 
   function roundUp(num, precision) {
     precision = Math.pow(10, precision);
@@ -46,13 +38,17 @@ const Home = () => {
   }
 
   React.useEffect(() => {
-    axios.get(`https://63a5914c318b23efa79755f9.mockapi.io/pizza`).then((resp) => {
-      dispatch(setPagesTotal(roundUp(resp.data.length / 4, 0)));
-    });
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substr(1));
+      const params2 = {
+        ...params,
+        sortCategory: sortArr.find((obj) => obj.nameSortCategory === params.nameSortCategory).id,
+      };
+      dispatch(setParamsFromUrl(params2));
+    }
   }, []);
 
   React.useEffect(() => {
-
     if (!isFirst) {
       const queryString = qs.stringify({
         nameSortCategory,
@@ -60,10 +56,15 @@ const Home = () => {
         searchValue,
         pageCurrent,
       });
-      //console.log(queryString);
       navigate(`?${queryString}`);
-    } 
+    }
   }, [nameSortCategory, activeCatId, searchValue, pageCurrent]);
+
+  React.useEffect(() => {
+    axios.get(`https://63a5914c318b23efa79755f9.mockapi.io/pizza`).then((resp) => {
+      dispatch(setPagesTotal(roundUp(resp.data.length / 4, 0)));
+    });
+  }, []);
 
   const fetchPizzas = () => {
     //const search = searchValue ? `&search=${searchValue}` : '';
@@ -89,6 +90,7 @@ const Home = () => {
     if (!isSearch.current) {
       fetchPizzas();
     }
+
     isSearch.current = false;
   }, [nameSortCategory, activeCatId, searchValue, pageCurrent]);
 

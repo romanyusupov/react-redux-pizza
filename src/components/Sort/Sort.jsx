@@ -4,12 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const Sort = () => {
   const [popapIsActive, setPopapIsActive] = React.useState(false);
-
   const sortArr = useSelector((store) => store.filter.sortArr);
   const sortCategory = useSelector((store) => store.filter.sortCategory);
   const dispatch = useDispatch();
 
   return (
+    
     <div className="sort">
       <div className="sort__label">
         <svg
