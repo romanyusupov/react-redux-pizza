@@ -58,9 +58,9 @@ export const filterSlice = createSlice({
     },
 
     setParamsFromUrl: (state, action) => {
-      if (action.payload.nameSortCategory.includes('-')) {
-        state.sortDirection = 'asc';
-      } else state.sortDirection = 'desc';
+      const includesMinus = action.payload.nameSortCategory.includes('-');
+      
+      state.sortDirection = includesMinus ? 'asc' : 'desc';
       state.sortCategory = Number(action.payload.sortCategory);
       state.nameSortCategory = action.payload.nameSortCategory;
       state.activeCatId =  Number(action.payload.activeCatId);
